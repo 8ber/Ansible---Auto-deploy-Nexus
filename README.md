@@ -29,6 +29,7 @@ python3 --version
 ```bash
 ansible-playbook deploy-nexus.yaml
 ```
+Note: You must verify ssh connection from your local machine to the target server.
 
 ## Featured modules:
 
