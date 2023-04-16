@@ -1,0 +1,93 @@
+---
+- name: Install jdk and net-tools
+  hosts: nexus_server
+  tasks: 
+    - name: Update apt
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: Install openjdk-8-jre-headless
+      apt: name=openjdk-8-jre-headless
+    - name: Install net-tools
+      apt: name=net-tools
+
+- name: Download, unpack and rename the Nexus dir 
+  hosts: nexus_server
+  tasks:
+  - name: Check nexus folder stats (if nexus folder already exists)
+    stat:
+      path: /opt/nexus
+    register: stat_nexus_folder
+  - name: Download Nexus
+    get_url:
+      url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz
+      dest: /opt/
+    register: download_output
+  - name: Unpack the nexus tar
+    unarchive:
+      src: "{{download_output.dest}}"
+      dest: /opt/
+      remote_src: true
+    when: not stat_nexus_folder.stat.exists
+  - name: Find the nexus folder name using Find module
+    find: 
+      paths: /opt
+      pattern: "nexus-*"
+      file_type: directory
+    register: nexus_folder
+  - name: Rename nexus directory
+    shell: mv {{nexus_folder.files[0].path}} /opt/nexus
+    when: not stat_nexus_folder.stat.exists
+
+- name: Create nexus and apply ownership to nexus folders
+  hosts: nexus_server
+  tasks:
+    - name: Validate nexus group exists
+      group:
+        name: nexus
+        state: present
+    - name: Create nexus user
+      user:
+        name: nexus
+        group: nexus
+    - name: Make nexus user own the nexus folder
+      file: 
+        path: /opt/nexus
+        state: directory
+        owner: nexus
+        group: nexus
+        recurse: true
+    - name: Make nexus user own the sonatype-work folder
+      file: 
+        path: /opt/sonatype-work
+        state: directory
+        owner: nexus
+        group: nexus
+        recurse: true
+
+- name: Start nexus with nexus user
+  hosts: nexus_server
+  become: true
+  become_user: nexus
+  tasks:
+    - name: Change the value of nexus.rc file
+      lineinfile:
+        path: /opt/nexus/bin/nexus.rc
+        regexp: '^#run_as_user=""'
+        line: run_as_user="nexus"
+    - name: Execute nexus binary
+      command: /opt/nexus/bin/nexus start 
+
+- name: Validate nexus runtime
+  hosts: nexus_server
+  tasks:
+    - name: using ps aux
+      shell: ps aux | grep nexus
+      register: status
+    - debug: msg={{status.stdout_lines}}
+    - name: Wait for port 8081 to become open on the host
+      ansible.builtin.wait_for:
+        port: 8081
+        state: started 
+    - name: using netstat
+      shell: netstat -plnt
+      register: status
+    - debug: msg={{status.stdout_lines}}
