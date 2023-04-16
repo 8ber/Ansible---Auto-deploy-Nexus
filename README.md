@@ -10,11 +10,10 @@ Note: this script is **NOT** meant to be used on AWS linux images.
 
 ## Usage
 
-In order to use this script, please edit the <> file:
+In order to use this script, please edit the hosts file with your target server IP address (i.e. replace "***" with the address).
 
--
--
--
+`*** ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_user=root`
+
 
 ## Installation
 
