@@ -1,10 +1,10 @@
 # Ansible - Auto deploy Nexus
 
-This is a simple ansible-playbook that automate the deployment of nexus artifactory on most of the **debian based linux distributions (i.e. that include apt)**. The playbook also validates that the nexus process has started on port 8081. 
+This is a simple Ansible-playbook that automates the deployment of Nexus artifactory on most of the **Debian based Linux distributions (i.e., those that include apt)**. The playbook also validates that the Nexus process has started on port 8081.
 
-The script is written using registered variables so it could withstand official sonatype future updates, and prevent errors based on the tar/binary file name. This is achieved by saving the output of a module and using it as a value by another variable. 
+The script is written using registered variables so it could withstand official sonatype future updates, and prevent errors based on the tar/binary file name. This is achieved by saving the output of a module as a variable and using it as a value in another module. 
 
-Specifically, the shell module is an example for an Ansible module that does not keep track of state. Thus, if a specific terms are due - error msg will appear. In order to be able to spin the playbook at all times, Ansible conditionals were used.
+Specifically, the shell module is an example of an Ansible module that does not keep track of state. Thus, if a specific term is due, an error message will appear. In order to be able to spin the playbook at all times, Ansible conditionals were used.
 
 Note: this script is **NOT** meant to be used on AWS linux images.
 
