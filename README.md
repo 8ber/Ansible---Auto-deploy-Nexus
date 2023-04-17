@@ -8,27 +8,23 @@ Specifically, the shell module is an example for an Ansible module that does not
 
 Note: this script is **NOT** meant to be used on AWS linux images.
 
-## Usage
+## Usage and installation 
 
-In order to use this script, please edit the hosts file with your target server IP address (i.e. replace "***" with the address).
+**make sure:**
+1. your local machine has ansible installed. 
+2. your linux target server has python installed (preferably version 3).
+3. verify/configure ssh connection from your local machine to the target server.
 
-`*** ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_user=root`
+to install:
 
-
-## Installation
-
-1. Make sure your local machine has ansible installed. 
-2. Make sure your linux target server has python (preferably version 3 installed)
-```bash
-python3 --version
-```
-3. in your local terminal:
+4. Edit the hosts file:
+`*** ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_user=root` replace "***" with your target server ip.
+5. in your local terminal:
 ```bash
 ansible-playbook deploy-nexus.yaml
 ```
-Note: You must verify ssh connection from your local machine to the target server.
 
-## Featured modules:
+### Featured modules:
 
 - apt
 - get_url (linux type)
@@ -46,7 +42,7 @@ Note: You must verify ssh connection from your local machine to the target serve
 
 Further usages and parameters of the listed modules, can be found at the official [Ansible documentation](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/).
 
-## Equivalent shell commands
+### Equivalent shell commands
 
 To clarify the manual process that this playbook is executing:
 ```bash
